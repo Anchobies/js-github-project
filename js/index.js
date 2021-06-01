@@ -4,12 +4,18 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("github-form").addEventListener("submit", e => {
         e.preventDefault();
 
+        document.getElementById("user-list").innerHTML = "";
+        document.getElementById("repos-list").innerHTML = "";
+
         if (e.target[0].value === "Users") {
             fetch(`https://api.github.com/search/users?q=${e.target[1].value}`)
                 .then(res => res.json())
                 .then(result => result.items.forEach(renderUser));
             e.target.reset();
         } else if (e.target[0].value === "Repos") {
+            fetch(`https://api.github.com/search/repositories?q=${e.target[1].value}:assembly&sort=stars&order=desc`)
+                .then(res => res.json())
+                .then (result => result.items.forEach(renderRepo));
             e.target.reset();
         }
     })
@@ -52,4 +58,12 @@ function renderUser(user) {
                 item.appendChild(repoName);
             }))
     })
+}
+
+function renderRepo(repo) {
+    const repoName = document.createElement("h3");
+    
+    repoName.textContent = repo.name;
+
+    document.getElementById("repos-list").appendChild(repoName);
 }
